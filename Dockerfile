@@ -22,6 +22,8 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
 #RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
 ADD model.safetensors /
 ADD model2.safetensors /
+ADD klF8Anime2_klF8Anime2VAE.pt /
+
 
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
@@ -53,6 +55,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY --from=download /repositories/ ${ROOT}/repositories/
 COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
 COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
+COPY --from=download /klF8Anime2_klF8Anime2VAE.pt /stable-diffusion-webui/models/VAE/klF8Anime2_klF8Anime2VAE.pt
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
