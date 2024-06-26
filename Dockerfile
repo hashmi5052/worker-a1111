@@ -19,8 +19,10 @@ RUN . /clone.sh BLIP https://github.com/salesforce/BLIP.git 48211a1594f1321b00f1
     . /clone.sh k-diffusion https://github.com/crowsonkb/k-diffusion.git 5b3af030dd83e0297272d861c19477735d0317ec && \
     . /clone.sh clip-interrogator https://github.com/pharmapsychotic/clip-interrogator 2486589f24165c8e3b303f84e9dbbea318df83e8
 
-RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
-RUN wget -O /model2.safetensors https://huggingface.co/webui/stable-diffusion-inpainting/resolve/main/sd-v1-5-inpainting.safetensors
+#RUN wget -O /model.safetensors https://civitai.com/api/download/models/15236
+ADD /home/hashmig786/model1.saetensors /
+ADD /home/hashmig786/model2.saftetensors /
+ADD /home/hashmig786/klF8Anime2_klF8Anime2VAE.pt /
 
 # ---------------------------------------------------------------------------- #
 #                        Stage 3: Build the final image                        #
@@ -50,8 +52,9 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r requirements_versions.txt
 
 COPY --from=download /repositories/ ${ROOT}/repositories/
-COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
-COPY --from=download /model2.safetensors /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
+COPY /home/hashmig786/model1.saetensors /stable-diffusion-webui/models/Stable-diffusion/model1.saetensors
+COPY /home/hashmig786/model2.saftetensors /stable-diffusion-webui/models/Stable-diffusion/model2.saftetensors
+COPY /home/hashmig786/klF8Anime2_klF8Anime2VAE.pt /stable-diffusion-webui/models/VAE/klF8Anime2_klF8Anime2VAE.pt
 RUN mkdir ${ROOT}/interrogate && cp ${ROOT}/repositories/clip-interrogator/data/* ${ROOT}/interrogate
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install -r ${ROOT}/repositories/CodeFormer/requirements.txt
@@ -73,7 +76,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 ADD src .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
-RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model2.ckpt && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
+RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model1.saetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model2.saftetensors
 
 # Cleanup section (Worker Template)
 RUN apt-get autoremove -y && \
