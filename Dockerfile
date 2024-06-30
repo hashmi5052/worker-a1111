@@ -1,4 +1,3 @@
-
 # ---------------------------------------------------------------------------- #
 #                         Stage 1: Download the models                         #
 # ---------------------------------------------------------------------------- #
@@ -7,8 +6,8 @@ FROM alpine/git:2.43.0 as download
 # NOTE: CivitAI usually requires an API token, so you need to add it in the header
 #       of the wget command if you're using a model from CivitAI.
 RUN apk add --no-cache wget && \
-    wget -q -O /model.safetensors https://huggingface.co/XpucT/Deliberate/resolve/main/Deliberate_v6.safetensors
-    wget -q -O /model1.safetensors https://huggingface.co/webui/stable-diffusion-inpainting/resolve/main/sd-v1-5-inpainting.safetensors
+    wget -q -O /model.safetensors https://huggingface.co/XpucT/Deliberate/resolve/main/Deliberate_v6.safetensors && \
+    wget -q -O /model1.safetensors https://huggingface.co/webui/stable-diffusion-inpainting/resolve/main/sd-v1-5-inpainting.safetensors && \
     wget -q -O /model2.safetensors https://huggingface.co/LeeKinXUn/sd-model/resolve/main/klF8Anime2_klF8Anime2VAE.pt
 
 # ---------------------------------------------------------------------------- #
@@ -26,7 +25,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN export COMMANDLINE_ARGS="--skip-torch-cuda-test --precision full --no-half"
-RUN export TORCH_COMMAND='pip install ---no-cache-dir torch==2.1.2+cu118 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118'
+RUN export TORCH_COMMAND='pip install --no-cache-dir torch==2.1.2+cu118 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118'
 
 RUN apt-get update && \
     apt install -y \
@@ -47,7 +46,6 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY --from=download /model.safetensors /model.safetensors
 COPY --from=download /model1.safetensors /model1.safetensors
 COPY --from=download /model2.safetensors /model2.safetensors
-
 
 # Install RunPod SDK
 RUN --mount=type=cache,target=/root/.cache/pip \
