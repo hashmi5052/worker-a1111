@@ -8,7 +8,7 @@ FROM alpine/git:2.43.0 as download
 RUN apk add --no-cache wget && \
     wget -q -O /model.safetensors https://huggingface.co/XpucT/Deliberate/resolve/main/Deliberate_v6.safetensors && \
     wget -q -O /model1.safetensors https://huggingface.co/webui/stable-diffusion-inpainting/resolve/main/sd-v1-5-inpainting.safetensors && \
-    wget -q -O /model2.safetensors https://huggingface.co/LeeKinXUn/sd-model/resolve/main/klF8Anime2_klF8Anime2VAE.pt
+    wget -q -O /klF8Anime2_klF8Anime2VAE.pt https://huggingface.co/LeeKinXUn/sd-model/resolve/main/klF8Anime2_klF8Anime2VAE.pt
 
 # ---------------------------------------------------------------------------- #
 #                        Stage 2: Build the final image                        #
@@ -45,8 +45,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 COPY --from=download /model.safetensors /model.safetensors
 COPY --from=download /model1.safetensors /model1.safetensors
-COPY --from=download /model2.safetensors /model2.safetensors
-
+COPY --from=download /klF8Anime2_klF8Anime2VAE.pt /klF8Anime2_klF8Anime2VAE.pt
 # Install RunPod SDK
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir runpod
@@ -54,8 +53,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 ADD src .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
-RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model2.safetensors
-
+RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/klF8Anime2_klF8Anime2VAE.pt
 # Set permissions and specify the command to run
 RUN chmod +x /start.sh
 CMD /start.sh
