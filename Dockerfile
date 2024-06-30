@@ -43,9 +43,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     git reset --hard ${A1111_RELEASE} && \
     python -c "from launch import prepare_environment; prepare_environment()" --skip-torch-cuda-test
 
-COPY --from=download /model.safetensors /model.safetensors
-COPY --from=download /model1.safetensors /model1.safetensors
-COPY --from=download /klF8Anime2_klF8Anime2VAE.pt /klF8Anime2_klF8Anime2VAE.pt
+COPY --from=download /model.safetensors /stable-diffusion-webui/models/Stable-diffusion/model.safetensors
+COPY --from=download /model1.safetensors /stable-diffusion-webui/models/Stable-diffusion/model1.safetensors
+COPY --from=download /klF8Anime2_klF8Anime2VAE.pt /stable-diffusion-webui/models/VAE/klF8Anime2_klF8Anime2VAE.pt
+
 # Install RunPod SDK
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip install --no-cache-dir runpod
@@ -54,6 +55,7 @@ ADD src .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
 RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/klF8Anime2_klF8Anime2VAE.pt
+
 # Set permissions and specify the command to run
 RUN chmod +x /start.sh
 CMD /start.sh
