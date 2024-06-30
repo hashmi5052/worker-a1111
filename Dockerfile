@@ -54,7 +54,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 ADD src .
 
 COPY builder/cache.py /stable-diffusion-webui/cache.py
-RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/klF8Anime2_klF8Anime2VAE.pt
+RUN cd /stable-diffusion-webui && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/Stable-diffusion/model1.safetensors && python cache.py --use-cpu=all --ckpt /stable-diffusion-webui/models/VAE/klF8Anime2_klF8Anime2VAE.pt
 
 # Set permissions and specify the command to run
 RUN chmod +x /start.sh
